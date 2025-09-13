@@ -36,8 +36,7 @@ class KanbanBoard extends Vue {
 
     private async created(): Promise<void> {
         try {
-            const mskRecommendation = await recommendationService.getMskRecommendations();
-            this.kanbanData = this.combineRecommendations(mskRecommendation);
+            this.loadkanbanData();
             this.employees = await employeeService.getAllEmployees();
         } catch (error) {
             console.error('Error loading MSK recommendations:', error);
@@ -79,16 +78,12 @@ class KanbanBoard extends Vue {
 
     public resetFilter(): void {
         this.selectedEmployeeId = null;
-        this.loadOriginalData();
+        this.loadkanbanData();
     }
 
-    private async loadOriginalData(): Promise<void> {
-        try {
-            const mskRecommendation = await recommendationService.getMskRecommendations();
-            this.kanbanData = this.combineRecommendations(mskRecommendation);
-        } catch (error) {
-            console.error('Error loading MSK recommendations:', error);
-        }
+    private async loadkanbanData(): Promise<void> {
+        const mskRecommendation = await recommendationService.getMskRecommendations();
+        this.kanbanData = this.combineRecommendations(mskRecommendation);
     }
 
     private combineRecommendations(boardMskRecommendation: IKanbanBoardMskRecommendation): IKanbanCard[] {
