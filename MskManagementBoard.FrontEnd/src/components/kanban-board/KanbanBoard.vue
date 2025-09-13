@@ -5,7 +5,7 @@ import {
   ColumnsDirective,
   ColumnDirective,
 } from "@syncfusion/ej2-vue-kanban";
-import type { ActionEventArgs } from '@syncfusion/ej2-kanban';
+import type { ActionEventArgs, DragEventArgs } from '@syncfusion/ej2-kanban';
 import { KanbanBoardConfig } from "./helper/KanbanBoardConfig";
 import { IKanbanBoardMskRecommendation } from "@/models/IKanbanBoardMskRecommendation";
 import { recommendationService } from "@/services/RecommendationService";
@@ -48,8 +48,8 @@ class KanbanBoard extends Vue {
     }
 
     public async onActionBegin(args: ActionEventArgs) {
+        const card = (args.changedRecords as IKanbanCard[])[0];
         if (args.requestType === "cardChange") {
-            const card = (args.changedRecords as IKanbanCard[])[0];
             const employeeId = card?.EmployeeId;
             if (card.RecommendationId && employeeId) {
                 if (card.Status === "New"){
@@ -62,8 +62,15 @@ class KanbanBoard extends Vue {
         }
 
         if (args.requestType === "cardRemove") {
-            const card = (args.deletedRecords as IKanbanCard[])[0];
             this.deleteMskRecommendation(card.RecommendationId);
+        }
+    }
+
+    public onDragStart(args: DragEventArgs): void {
+        const card = (args.data as IKanbanCard[])[0];
+        if (card.Status === "New" && card.EmployeeId === null){
+            args.cancel = true;
+            return;
         }
     }
 
@@ -144,6 +151,7 @@ export default toNative(KanbanBoard);
             :dialogSettings="kanbanConfig.dialogSettings"
             :allowDragAndDrop="true"
             :actionBegin="onActionBegin"
+            :dragStart="onDragStart"            
             >
             <template #cardTemplate="{ data }">
                 <div class="card">
