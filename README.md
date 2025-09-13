@@ -1,170 +1,140 @@
-### Build an MSK Suggestion Management Board
+# MSK Suggestion Management API
 
-**Background**
-
-A regional director of health, safety and wellbeing at a client has been tasked with reducing rates of MSK absence in the company. They've rolled out VIDA to help them achieve it. Now they need to ensure employees are reducing their risk based on suggestions made by VIDA.
-
-The system handles four main types of recommendations:
-
-1. **Targeted Exercises** - Things like strength training, flexibility work, balance exercises
-2. **Workspace Adjustments** - Monitor height changes, ordering ergonomic equipment
-3. **Behavioral Changes** - Taking micro breaks, improving posture
-4. **Lifestyle Changes** - Better sleep habits, exercise routines, diet improvements
-
-## Tech Stack
-
-### Frontend
-
-I went with Vue 3 and TypeScript because I wanted something modern and type-safe. For the Kanban board, I used Syncfusion's component library - it's really solid and handles drag-and-drop beautifully. Vite handles the build process, and I wrote custom CSS for the styling.
-
-### Backend
-
-I built the API using .NET 9 with Clean Architecture. I separated everything into layers (Domain, Application, Infrastructure, API) to keep things organized. Entity Framework Core handles the data access with an in-memory database as requested. Swagger is set up for API documentation.
+This is the backend API I built for managing MSK (Musculoskeletal) recommendations and employee assignments. It's a .NET 9 Web API with Clean Architecture that serves data to the frontend Kanban board.
 
 ## Getting Started
 
-### Prerequisites
+### What You Need
 
-- Node.js (v20+)
-- .NET 9 SDK
-- Git
+- .NET 9.0 SDK
+- Visual Studio 2022 or VS Code
+- Entity Framework Core Tools (if you want to mess with migrations)
 
-### Installation
+### How to Run It
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/msk-suggestion-management-board.git
-   cd msk-suggestion-management-board
-   ```
-
-2. **Backend Setup:**
-
-   ```bash
-   cd MskSuggestionManagement.Api
+1. **Clone the repo**
+   git clone https://github.com/ahmedkhalifa367/MskSuggestionManagement
+2. **Restore packages**
    dotnet restore
-   dotnet run --project MskSuggestionManagement.Api
-   ```
+3. **Run the app**
+   dotnet run
+4. **Check it out**
+   - API: `https://localhost:7230/api`
+   - Swagger docs: `https://localhost:7230/swagger`
 
-3. **Frontend Setup:**
-   ```bash
-   cd MskManagementBoard.FrontEnd
-   npm install
-   npm run dev
-   ```
+## API Endpoints
 
-You'll need Node.js (v20+) and .NET 9 SDK installed. I used VS Code for development, but Visual Studio works too.
-
-### Running the Backend
-
-First, let's get the API running:
-
-```bash
-cd MskSuggestionManagement.Api
-dotnet restore
-dotnet run --project MskSuggestionManagement.Api
-```
-
-Once it's running, you can check out:
-
-- API: `https://localhost:7230/api`
-- Swagger docs: `https://localhost:7230/swagger`
-
-### Running the Frontend
-
-In a new terminal:
-
-```bash
-cd MskManagementBoard.FrontEnd
-npm install
-npm run dev
-```
-
-The frontend will be at `http://localhost:5173`
-
-## Frontend Details
-
-I built the frontend with Vue 3 and TypeScript. Here's what I used:
-
-- Vue 3.5.18 with the Composition API
-- TypeScript for better development experience
-- Vite for fast builds and hot reload
-- Syncfusion Kanban component (it's really good!)
-- Vue Facing Decorator for class-based components
-
-### What I Built
-
-The main feature is the interactive Kanban board where you can:
-
-- Drag cards between different status columns
-- See real-time updates when you move things around
-- View detailed information in popup dialogs
-- Assign recommendations to employees with a dropdown
-
-Each card shows the recommendation title, description, risk level (with color-coded badges), and who it's assigned to. The board is fully responsive and works on mobile too.
-
-## Backend Details
-
-For the backend, I used .NET 9 with Clean Architecture. Here's the stack:
-
-- ASP.NET Core Web API for the REST endpoints
-- Entity Framework Core with in-memory database (as requested)
-- AutoMapper for object mapping
-- Swagger for API documentation
-
-### API Endpoints
-
-I created these endpoints:
-
-**Employee Management:**
+### Employee Stuff
 
 - `GET /api/employees` - Get all employees
-- `POST /api/employees` - Add new employee
+- `POST /api/employees` - Add a new employee
 
-**MSK Recommendations:**
+### MSK Recommendations
 
-- `GET /api/msk-recommendations` - Get all recommendations for the Kanban board
-- `GET /api/msk-recommendations/vida` - Get unassigned VIDA recommendations
-- `GET /api/msk-recommendations/{employeeId}/employee` - Get recommendations for a specific employee
-- `POST /api/msk-recommendations/assign` - Assign a recommendation to an employee
-- `PUT /api/msk-recommendations/update-status` - Update the status of an assignment
+- `GET /api/mskrecommendations` - Get all recommendations for the Kanban board
+- `GET /api/mskrecommendations/vida` - Get recommendations from Vida system
+- `GET /api/mskrecommendations/assignments` - Get all assignments
+- `POST /api/mskrecommendations/assign` - Assign a recommendation to someone
+- `PUT /api/mskrecommendations/status` - Update assignment status
+- `PUT /api/mskrecommendations/reassign` - Reassign to a different employee
 
-## Database Design
+## Database Schema
 
-I kept the database simple but effective:
+### What I'm Using Now
 
-**Employee Table:**
+I'm using Entity Framework Core with an in-memory database for the demo. It's not production-ready, but it works for showing how the system would work.
 
-- Id, FirstName, LastName, Email, timestamps
+### How I'd Structure a Real Database
 
-**MskRecommendation Table:**
+```sql
+-- Employees table
+CREATE TABLE Employees (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    FirstName NVARCHAR(100) NOT NULL,
+    LastName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(255) UNIQUE NOT NULL,
+    Department NVARCHAR(100),
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
+    UpdatedAt DATETIME2 DEFAULT GETUTCDATE()
+);
 
-- Id, Title, Description, Type (enum), Level (enum), timestamps
+-- MSK Recommendations table
+CREATE TABLE MskRecommendations (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Type INT NOT NULL, -- Enum: TargetedExercise, WorkspaceAdjustment, etc.
+    Level INT NOT NULL, -- Enum: Low, Medium, High
+    Description NVARCHAR(MAX) NOT NULL,
+    Source NVARCHAR(50) NOT NULL, -- 'Employee' or 'Vida'
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
+    UpdatedAt DATETIME2 DEFAULT GETUTCDATE()
+);
 
-**EmployeeMskRecommendation Table (junction):**
+-- Assignment relationship (Many-to-Many)
+CREATE TABLE EmployeeMskRecommendations (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    EmployeeId UNIQUEIDENTIFIER NOT NULL,
+    MskRecommendationId UNIQUEIDENTIFIER NOT NULL,
+    Status INT NOT NULL, -- Enum: New, Assigned, InProgress, Completed, Rejected
+    AssignedAt DATETIME2 DEFAULT GETUTCDATE(),
+    CompletedAt DATETIME2 NULL,
+    Notes NVARCHAR(MAX) NULL,
 
-- EmployeeId, MskRecommendationId, Status (enum), timestamps
-
-The junction table handles the many-to-many relationship between employees and recommendations, with a status field to track progress.
-
-## Running the Project
-
-Make sure you have Node.js (v20+) and .NET 9 SDK installed.
-
-**Backend:**
-
-```bash
-cd MskSuggestionManagement.Api
-dotnet restore
-dotnet run --project MskSuggestionManagement.Api
+    FOREIGN KEY (EmployeeId) REFERENCES Employees(Id) ON DELETE CASCADE,
+    FOREIGN KEY (MskRecommendationId) REFERENCES MskRecommendations(Id) ON DELETE CASCADE,
+    UNIQUE(EmployeeId, MskRecommendationId)
+);
 ```
 
-**Frontend:**
+### Indexes for Performance
 
-```bash
-cd MskManagementBoard.FrontEnd
-npm install
-npm run dev
+```sql
+-- Performance indexes
+CREATE INDEX IX_EmployeeMskRecommendations_EmployeeId ON EmployeeMskRecommendations(EmployeeId);
+CREATE INDEX IX_EmployeeMskRecommendations_Status ON EmployeeMskRecommendations(Status);
+CREATE INDEX IX_EmployeeMskRecommendations_AssignedAt ON EmployeeMskRecommendations(AssignedAt);
+CREATE INDEX IX_MskRecommendations_Source ON MskRecommendations(Source);
+CREATE INDEX IX_Employees_Email ON Employees(Email);
 ```
 
-The API will be at `https://localhost:7230` and the frontend at `http://localhost:5173`.
+I went with **Clean Architecture** because:
+
+- **Domain Layer** - Core business logic and entities
+- **Application Layer** - Use cases and business rules
+- **Infrastructure Layer** - Data access and external stuff
+- **API Layer** - Controllers and presentation
+
+I like this approach because:
+
+- Each layer has a clear responsibility
+- Easy to test each layer independently
+- Can swap out implementations (like changing databases)
+- Follows SOLID principles
+
+### Technology Choices
+
+- **.NET 9** - Latest and greatest, good performance
+- **Entity Framework Core** - ORM that actually works well
+- **AutoMapper** - Maps between DTOs and entities without writing boring mapping code
+- **Swagger** - Auto-generates API documentation
+
+## What I Assumed
+
+1. **Data Volume** - Hundreds of employees, thousands of recommendations (not millions)
+2. **User Roles** - One admin managing everyone (no multi-tenant complexity)
+3. **Integration** - Vida system sends data via REST API (I simulated this)
+4. **Real-time** - No need for real-time collaboration
+5. **Security** - Development mode without auth (would add JWT in production)
+6. **Performance** - In-memory database is fine for demo (would use SQL Server in production)
+
+## What I'd Do With More Time
+
+### Backend Improvements
+
+- **Authentication & Authorization** - JWT tokens with proper roles
+- **Security** - Development mode without auth (would add JWT in production)
+- **User Roles** - One admin managing everyone (no multi-tenant complexity)
+- **Real Database** - SQL Server or PostgreSQL with proper migrations
+- **Caching** - Redis for frequently accessed data
+- **Logging** - Serilog with correlation IDs for debugging
+- **Unit/Tests** - Actually test my code (I know, I should have)
+- **Input Validation** - FluentValidation for comprehensive validation
