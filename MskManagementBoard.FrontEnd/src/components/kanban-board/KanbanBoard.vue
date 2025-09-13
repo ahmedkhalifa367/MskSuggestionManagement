@@ -5,7 +5,6 @@ import {
   ColumnsDirective,
   ColumnDirective,
 } from "@syncfusion/ej2-vue-kanban";
-import type { DialogEventArgs, DragEventArgs } from '@syncfusion/ej2-kanban';
 import type { ActionEventArgs } from '@syncfusion/ej2-kanban';
 import { KanbanBoardConfig } from "./helper/KanbanBoardConfig";
 import { IKanbanBoardMskRecommendation } from "@/models/IKanbanBoardMskRecommendation";
@@ -48,22 +47,17 @@ class KanbanBoard extends Vue {
         }
     }
 
-    public onItemDragStop(args: DragEventArgs): void {
-        console.log("cccccccccccccccccc")
-        const card = args.data?.[0] as Partial<IKanbanCard>;
-        const employeeId = card?.EmployeeId ?? null;
-        if (employeeId) {
-            this.updateRecommendationStatus(employeeId, card.RecommendationId, card.Status);
-        }
-    }
-
     public async onActionBegin(args: ActionEventArgs) {
         if (args.requestType === "cardChange") {
             const card = (args.changedRecords as IKanbanCard[])[0];
             const employeeId = card?.EmployeeId;
             if (card.RecommendationId && employeeId) {
-                this.assignMskRecommendation(card.EmployeeId, card.RecommendationId);
-                this.updateCardStatusAfterAssigned(card, employeeId);
+                if (card.Status === "New"){
+                    this.assignMskRecommendation(card.EmployeeId, card.RecommendationId);
+                    this.updateCardStatusAfterAssigned(card, employeeId);
+                } else {
+                    this.updateRecommendationStatus(employeeId, card.RecommendationId, card.Status);
+                }
             }
         }
 
@@ -149,7 +143,6 @@ export default toNative(KanbanBoard);
             :cardSettings="kanbanConfig.cardSettings"
             :dialogSettings="kanbanConfig.dialogSettings"
             :allowDragAndDrop="true"
-            :dragStop="onItemDragStop"
             :actionBegin="onActionBegin"
             >
             <template #cardTemplate="{ data }">
