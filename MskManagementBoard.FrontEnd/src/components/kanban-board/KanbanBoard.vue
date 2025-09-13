@@ -29,21 +29,18 @@ class KanbanBoard extends Vue {
     public kanbanConfig = KanbanBoardConfig;
     public kanbanData: IKanbanCard[] = [];
     public employees: IEmployee[] = [];
-    public loading = false;
     public badgeStatusClass = KanbanBoardConfig.badgeStatusClass;
     public badgeLevelClass = KanbanBoardConfig.badgeLevelClass;
     public headerClassName = KanbanBoardConfig.headerClassName;
+    public selectedEmployeeId: string | null = null;
 
     private async created(): Promise<void> {
         try {
-            //this.loading = true;
             const mskRecommendation = await recommendationService.getMskRecommendations();
             this.kanbanData = this.combineRecommendations(mskRecommendation);
             this.employees = await employeeService.getAllEmployees();
         } catch (error) {
             console.error('Error loading MSK recommendations:', error);
-        } finally {
-            //this.loading = false;
         }
     }
 
@@ -74,6 +71,26 @@ class KanbanBoard extends Vue {
         }
     }
 
+    public filterByAssignee(): void {
+        if (this.selectedEmployeeId !== null) {
+            this.kanbanData = this.kanbanData.filter(card => card.EmployeeId === this.selectedEmployeeId);
+        }
+    }
+
+    public resetFilter(): void {
+        this.selectedEmployeeId = null;
+        this.loadOriginalData();
+    }
+
+    private async loadOriginalData(): Promise<void> {
+        try {
+            const mskRecommendation = await recommendationService.getMskRecommendations();
+            this.kanbanData = this.combineRecommendations(mskRecommendation);
+        } catch (error) {
+            console.error('Error loading MSK recommendations:', error);
+        }
+    }
+
     private combineRecommendations(boardMskRecommendation: IKanbanBoardMskRecommendation): IKanbanCard[] {
         const combinedCards: IKanbanCard[] = [];
 
@@ -91,7 +108,6 @@ class KanbanBoard extends Vue {
     }
 
     private async updateRecommendationStatus(employeeId: string, mskRecommendationId: string, newStatus: Status): Promise<void> {
-        console.log(newStatus)
         try {
             await recommendationService.updateMskRecommendationStatus({
                 employeeId,
@@ -124,21 +140,23 @@ class KanbanBoard extends Vue {
             const employee = this.employees.find(e => e.id === employeeId);
             card.Status = "Assigned";
             card.EmployeeFullName = employee.fullName;
-            this.refreshKanbanBoard();
         }
-    }
-
-    private refreshKanbanBoard(): void {
-        // TODO: Debug reference issue needs further investigation and improvement.
-        const kanbanControlElement = Ref(null);
-        let schedule = kanbanControlElement.value.ej2Instances;
-        schedule.refreshLayout();
     }
 }
 export default toNative(KanbanBoard);
 </script>
 <template>
     <section class="panel">
+        <div class="kanban-controls">
+            <label class="label">Assignee:</label>
+            <select v-model="selectedEmployeeId" @change="filterByAssignee()" class="base-select">
+                <option :value="null">Select employee</option>
+                <option v-for="employee in employees" :key="employee.id" :value="employee.id">
+                    {{ employee.fullName }}
+                </option>
+            </select>
+            <button @click="resetFilter()" class="clear-filters-btn">Clear Filter</button>
+        </div>
         <ejs-kanban
             ref="kanbanControlElement"
             keyField="Status"
@@ -263,7 +281,7 @@ export default toNative(KanbanBoard);
 }
 
 .base-select{
-  width: 100%;
+  width: auto;
   padding: 0.5rem 0.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
@@ -274,6 +292,27 @@ export default toNative(KanbanBoard);
 
 .base-select:focus{
     outline: #e5e7eb auto;
+}
+
+.kanban-controls{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.kanban-controls label{
+  white-space: nowrap;
+}
+
+.clear-filters-btn{
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 @media (max-width: 640px){
