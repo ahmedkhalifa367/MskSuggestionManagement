@@ -39,7 +39,8 @@ class KanbanBoard extends Vue {
             this.loadkanbanData();
             this.employees = await employeeService.getAllEmployees();
         } catch (error) {
-            console.error('Error loading MSK recommendations:', error);
+            console.error(error);
+            this.$toast.error('Couldn’t load board data. Please refresh and try again.');
         }
     }
 
@@ -66,6 +67,7 @@ class KanbanBoard extends Vue {
         const card = (args.data as IKanbanCard[])[0];
         if (card.Status === "New" && card.EmployeeId === null){
             args.cancel = true;
+            this.$toast.error('Please assign this card first, Double-click on the card to assign.');
             return;
         }
     }
@@ -82,8 +84,14 @@ class KanbanBoard extends Vue {
     }
 
     private async loadkanbanData(): Promise<void> {
-        const mskRecommendation = await recommendationService.getMskRecommendations();
-        this.kanbanData = this.combineRecommendations(mskRecommendation);
+        try {
+            const mskRecommendation = await recommendationService.getMskRecommendations();
+            this.kanbanData = this.combineRecommendations(mskRecommendation);
+        } catch (error) {
+            console.error(error);
+            this.$toast.error('Couldn’t load board data. Please refresh and try again.');
+        }
+
     }
 
     private combineRecommendations(boardMskRecommendation: IKanbanBoardMskRecommendation): IKanbanCard[] {
@@ -110,7 +118,8 @@ class KanbanBoard extends Vue {
                 newStatus
             });
         } catch (error) {
-            console.error('Failed to update status:', error);
+            console.error(error);
+            this.$toast.error('Failed to update status, Please refresh and try again.');
         }
     }
 
@@ -121,7 +130,8 @@ class KanbanBoard extends Vue {
                 mskRecommendationId
             });
         } catch (error) {
-            console.error('Failed to Assign:', error);
+            console.error(error);
+            this.$toast.error('Failed to assign the card, Please refresh and try again.');
         }
     }
 

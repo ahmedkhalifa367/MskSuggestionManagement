@@ -1,4 +1,5 @@
 @import './syncfusionKanban.css';
+@import 'vue-toast-notification/dist/theme-sugar.css';
 :root { 
   color-scheme: light; 
 }
