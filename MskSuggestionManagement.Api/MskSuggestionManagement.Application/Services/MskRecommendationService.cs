@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MskSuggestionManagement.Application.Common.Exceptions;
 using MskSuggestionManagement.Application.Dtos;
-using MskSuggestionManagement.Domain.Entities;
 using MskSuggestionManagement.Domain.Enums;
 using MskSuggestionManagement.Domain.Interfaces;
 
