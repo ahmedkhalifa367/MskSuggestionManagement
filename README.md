@@ -44,57 +44,17 @@ This is the backend API I built for managing MSK (Musculoskeletal) recommendatio
 
 I'm using Entity Framework Core with an in-memory database for the demo. It's not production-ready, but it works for showing how the system would work.
 
-### How I'd Structure a Real Database
+### Entities
 
-```sql
--- Employees table
-CREATE TABLE Employees (
-    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    FirstName NVARCHAR(100) NOT NULL,
-    LastName NVARCHAR(100) NOT NULL,
-    Email NVARCHAR(255) UNIQUE NOT NULL,
-    Department NVARCHAR(100),
-    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
-    UpdatedAt DATETIME2 DEFAULT GETUTCDATE()
-);
+- **Employee**: Basic employee information
+- **MskRecommendation**: MSK recommendation details
+- **EmployeeMskRecommendation**: Assignment relationship with status, the relation between the **Employee** and **MskRecommendation** is many to many.
 
--- MSK Recommendations table
-CREATE TABLE MskRecommendations (
-    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    Type INT NOT NULL, -- Enum: TargetedExercise, WorkspaceAdjustment, etc.
-    Level INT NOT NULL, -- Enum: Low, Medium, High
-    Description NVARCHAR(MAX) NOT NULL,
-    Source NVARCHAR(50) NOT NULL, -- 'Employee' or 'Vida'
-    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
-    UpdatedAt DATETIME2 DEFAULT GETUTCDATE()
-);
+### Enums
 
--- Assignment relationship (Many-to-Many)
-CREATE TABLE EmployeeMskRecommendations (
-    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    EmployeeId UNIQUEIDENTIFIER NOT NULL,
-    MskRecommendationId UNIQUEIDENTIFIER NOT NULL,
-    Status INT NOT NULL, -- Enum: New, Assigned, InProgress, Completed, Rejected
-    AssignedAt DATETIME2 DEFAULT GETUTCDATE(),
-    CompletedAt DATETIME2 NULL,
-    Notes NVARCHAR(MAX) NULL,
-
-    FOREIGN KEY (EmployeeId) REFERENCES Employees(Id) ON DELETE CASCADE,
-    FOREIGN KEY (MskRecommendationId) REFERENCES MskRecommendations(Id) ON DELETE CASCADE,
-    UNIQUE(EmployeeId, MskRecommendationId)
-);
-```
-
-### Indexes for Performance
-
-```sql
--- Performance indexes
-CREATE INDEX IX_EmployeeMskRecommendations_EmployeeId ON EmployeeMskRecommendations(EmployeeId);
-CREATE INDEX IX_EmployeeMskRecommendations_Status ON EmployeeMskRecommendations(Status);
-CREATE INDEX IX_EmployeeMskRecommendations_AssignedAt ON EmployeeMskRecommendations(AssignedAt);
-CREATE INDEX IX_MskRecommendations_Source ON MskRecommendations(Source);
-CREATE INDEX IX_Employees_Email ON Employees(Email);
-```
+- **Type**: TargetedExercise, WorkspaceAdjustment, BehavioralChange, LifestyleChange
+- **Level**: Low, Medium, High
+- **Status**: New, Assigned, InProgress, Completed, Rejected
 
 I went with **Clean Architecture** because:
 
