@@ -1,0 +1,152 @@
+@import '@syncfusion/ej2-base/styles/material.css';
+@import '@syncfusion/ej2-buttons/styles/material.css';
+@import '@syncfusion/ej2-layouts/styles/material.css';
+@import '@syncfusion/ej2-dropdowns/styles/material.css';
+@import '@syncfusion/ej2-inputs/styles/material.css';
+@import '@syncfusion/ej2-navigations/styles/material.css';
+@import '@syncfusion/ej2-popups/styles/material.css';
+@import '@syncfusion/ej2-vue-kanban/styles/material.css';
+
+.kanban-header-template.e-kanban .header-template-wrap {
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.kanban-header-template.e-kanban .header-template-wrap .header-icon {
+  font-family: 'Kanban priority icons';
+  margin-top: 3px;
+  width: 10%;
+}
+
+.kanban-header-template.e-kanban .header-template-wrap .header-text {
+  margin-left: 15px;
+}
+
+.kanban-header-template.e-kanban.e-rtl .header-template-wrap .header-text {
+  margin-right: 15px;
+}
+
+.kanban-header-template.e-kanban .card-header {
+  padding-left: 12px;
+}
+
+.kanban-header-template.e-kanban .New::before {
+  content: '\e700';
+  color: #0251cc;
+  font-size: 16px;
+}
+
+.kanban-header-template.e-kanban .InProgress::before {
+  content: '\e703';
+  color: #ea9713;
+  font-size: 16px;
+}
+
+.kanban-header-template.e-kanban .Assigned::before {
+  content: '\e701';
+  color: #8e4399;
+  font-size: 16px;
+}
+
+.kanban-header-template.e-kanban .Completed::before {
+  content: '\e702';
+  color: #63ba3c;
+  font-size: 16px;
+}
+
+.kanban-header-template.e-kanban .Rejected::before {
+  content: '\e702';
+  color: #63ba3c;
+  font-size: 16px;
+}
+
+:deep(.e-kanban) { 
+    border: none; 
+}
+
+:deep(.e-kanban .e-kanban-header) {
+  background: #fff;
+  border-bottom: 1px solid #eef2f7;
+}
+
+:deep(.e-kanban .e-kanban-content) {
+  background: #fbfcfd;
+}
+
+:deep(.e-kanban .e-header-text) {
+  color: #323130;
+  font-weight: 700;
+}
+
+:deep(.e-card) {
+  border-radius: 12px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+:deep(.e-kanban){ 
+  height:100%; 
+}
+
+:deep(.e-kanban){
+  padding-top: 10px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 12px;
+  width: 4rem; 
+}
+
+.badge-low {
+  background: #DFF6DD;
+  color: #0E700E;
+  border-color: #A7E3A5;
+}
+
+.badge-medium {
+  background: #FFF4CE;
+  color: #6B4B00;
+  border-color: #FFD679;
+}
+
+.badge-high {
+  background: #FDE7E9;
+  color: #A4262C;
+  border-color: #E6BAC0;
+}
+
+.badge-status-new {
+  background: #E5E7EB;
+  color: #374151;
+  border-color: #D1D5DB;
+}
+.badge-status-assigned {
+  background: #F3E8FF;
+  color: #5B21B6;
+  border-color: #E9D5FF;
+}
+.badge-status-inprogress {
+  background: #E0F2FE;
+  color: #075985;
+  border-color: #BAE6FD;
+}
+.badge-status-completed {
+  background: #D1FAE5;
+  color: #065F46;
+  border-color: #A7F3D0;
+}
+.badge-status-rejected {
+  background: #FFE4E6;
+  color: #9F1239;
+  border-color: #FECDD3;
+}

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@syncfusion/ej2-vue-kanban": "^31.1.17",
+    "axios": "^1.11.0"
+  }
+}

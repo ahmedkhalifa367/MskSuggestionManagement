@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MskSuggestionManagement.Application\MskSuggestionManagement.Application.csproj" />
+    <ProjectReference Include="..\MskSuggestionManagement.Infrastructure\MskSuggestionManagement.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
