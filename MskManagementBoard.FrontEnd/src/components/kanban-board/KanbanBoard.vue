@@ -28,6 +28,7 @@ class KanbanBoard extends Vue {
 	public readonly kanbanControlElement!: InstanceType<typeof KanbanComponent>;
     public kanbanConfig = KanbanBoardConfig;
     public kanbanData: IKanbanCard[] = [];
+    public filteredKanbanData: IKanbanCard[] = [];
     public employees: IEmployee[] = [];
     public badgeStatusClass = KanbanBoardConfig.badgeStatusClass;
     public badgeLevelClass = KanbanBoardConfig.badgeLevelClass;
@@ -36,7 +37,9 @@ class KanbanBoard extends Vue {
 
     private async created(): Promise<void> {
         try {
-            this.loadkanbanData();
+            const mskRecommendation = await recommendationService.getMskRecommendations();
+            this.kanbanData = this.combineRecommendations(mskRecommendation);
+            this.filteredKanbanData = this.kanbanData;
             this.employees = await employeeService.getAllEmployees();
         } catch (error) {
             console.error(error);
@@ -74,13 +77,13 @@ class KanbanBoard extends Vue {
 
     public filterByAssignee(): void {
         if (this.selectedEmployeeId !== null) {
-            this.kanbanData = this.kanbanData.filter(card => card.EmployeeId === this.selectedEmployeeId);
+            this.filteredKanbanData = this.kanbanData.filter(card => card.EmployeeId === this.selectedEmployeeId);
         }
     }
 
     public resetFilter(): void {
         this.selectedEmployeeId = null;
-        this.loadkanbanData();
+        this.filteredKanbanData = this.kanbanData;
     }
 
     private async loadkanbanData(): Promise<void> {
@@ -169,7 +172,7 @@ export default toNative(KanbanBoard);
             width="auto"
             height="auto"
             cssClass="kanban-header-template"
-            :dataSource="kanbanData"
+            :dataSource="filteredKanbanData"
             :cardSettings="kanbanConfig.cardSettings"
             :dialogSettings="kanbanConfig.dialogSettings"
             :allowDragAndDrop="true"
