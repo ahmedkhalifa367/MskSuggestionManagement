@@ -11,5 +11,6 @@ namespace MskSuggestionManagement.Domain.Entities
         public MskRecommendation MskRecommendation { get; set; }
 
         public Status Status { get; set; } = Status.New;
+        public DateTimeOffset AssignedAt { get; set; } = DateTimeOffset.UtcNow;
     }
 }
