@@ -1,4 +1,4 @@
-# MSK Suggestion Management System https://www.youtube.com/watch?v=3nwAg1MAKsk
+# MSK Suggestion Management System [Press Here for more info](https://www.youtube.com/watch?v=3nwAg1MAKsk)
 
 - **Backend API** (.NET 9) - Handles all the data and business logic
 - **Frontend** (Vue 3) - A drag-and-drop Kanban board for managing recommendations
