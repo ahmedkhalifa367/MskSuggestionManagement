@@ -10,17 +10,18 @@
 .kanban-header-template.e-kanban .header-template-wrap {
   display: inline-flex;
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .kanban-header-template.e-kanban .header-template-wrap .header-icon {
-  font-family: 'Kanban priority icons';
   margin-top: 3px;
-  width: 10%;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
 }
 
 .kanban-header-template.e-kanban .header-template-wrap .header-text {
-  margin-left: 15px;
+  margin-left: 10px;
 }
 
 .kanban-header-template.e-kanban.e-rtl .header-template-wrap .header-text {
@@ -31,33 +32,28 @@
   padding-left: 12px;
 }
 
-.kanban-header-template.e-kanban .New::before {
-  content: '\e700';
-  color: #0251cc;
+.kanban-header-template.e-kanban .header-template-wrap .New::before {
+  content: '\1F195';
   font-size: 16px;
 }
 
-.kanban-header-template.e-kanban .InProgress::before {
-  content: '\e703';
-  color: #ea9713;
+.kanban-header-template.e-kanban .header-template-wrap .Assigned::before {
+  content: '\1F464';
   font-size: 16px;
 }
 
-.kanban-header-template.e-kanban .Assigned::before {
-  content: '\e701';
-  color: #8e4399;
+.kanban-header-template.e-kanban .header-template-wrap .InProgress::before {
+  content: '\26A1';
   font-size: 16px;
 }
 
-.kanban-header-template.e-kanban .Completed::before {
-  content: '\e702';
-  color: #63ba3c;
+.kanban-header-template.e-kanban .header-template-wrap .Completed::before {
+  content: '\2705';
   font-size: 16px;
 }
 
-.kanban-header-template.e-kanban .Rejected::before {
-  content: '\e702';
-  color: #63ba3c;
+.kanban-header-template.e-kanban .header-template-wrap .Rejected::before {
+  content: '\274C';
   font-size: 16px;
 }
 

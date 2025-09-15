@@ -235,7 +235,7 @@ export default toNative(KanbanBoard);
             </e-columns>
             <template #columnsTemplate="{data}">
                 <div class="header-template-wrap">
-                    <div :class="headerClassName(data)"></div>
+                    <span :class="headerClassName(data)"></span>
                     <div class="header-text">{{ data.headerText }}</div>
                 </div>
             </template>
